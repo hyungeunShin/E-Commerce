@@ -10,7 +10,7 @@ public class FilterConfig {
 //    @Bean
     public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
-                      .route(r -> r.path("/users/**")
+                      .route(r -> r.path("/test/**")
                                    .filters(f -> f.addRequestHeader("user-request", "user-request-header")
                                                   .addResponseHeader("user-response", "user-response.header"))
                                    .uri("http://localhost:8081"))
