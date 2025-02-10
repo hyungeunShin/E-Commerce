@@ -1,5 +1,5 @@
 server:
-  port: 0 # If you specify it as 0, random port
+  port: 8081 # If you specify it as 0, random port
 
 spring:
   application:
@@ -7,7 +7,7 @@ spring:
 
 eureka:
   instance:
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${server.port}
   client:
     register-with-eureka: true
     fetch-registry: true
