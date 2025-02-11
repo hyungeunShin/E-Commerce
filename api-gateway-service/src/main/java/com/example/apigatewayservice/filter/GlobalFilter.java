@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -28,11 +29,23 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
             if(config.isPreLogger()) {
                 log.info("Global Filter Start : {}", request.getId());
             }
-            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                if(config.isPostLogger()) {
-                    log.info("Global Filter End : {}", response.getStatusCode());
-                }
-            }));
+
+            return chain.filter(exchange)
+                    .onErrorResume(throwable -> {
+                        log.error("Exception 발생: {}", throwable.getMessage(), throwable);
+
+                        String errorMessage = "잘못된 요청: " + throwable.getMessage();
+                        byte[] bytes = errorMessage.getBytes();
+
+                        response.setStatusCode(HttpStatus.BAD_REQUEST);
+
+                        return response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)));
+                    })
+                    .then(Mono.fromRunnable(() -> {
+                        if(config.isPostLogger()) {
+                            log.info("Global Filter End : {}", response.getStatusCode());
+                        }
+                    }));
         };
     }
 

@@ -16,7 +16,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers("/h2-console/**");
+                           .requestMatchers("/h2-console/**", "/user-service/welcome", "/user-service/health_check");
     }
 
     @Bean
@@ -24,7 +24,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests.requestMatchers("users/**").permitAll()
+                authorizeRequests
+                        .requestMatchers("/user-service/**").permitAll()
         );
 
         return http.build();
