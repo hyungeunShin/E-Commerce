@@ -40,4 +40,8 @@ public class UserService {
     public List<UserResponse> getUserAll() {
         return repository.findAll().stream().map(UserResponse::from).toList();
     }
+
+    public UserResponse getUserByEmail(String username) {
+        return UserResponse.from(repository.findByEmail(username).orElseThrow());
+    }
 }

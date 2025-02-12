@@ -1,6 +1,6 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.dto.CreateUser;
+import com.example.userservice.dto.CreateUserRequest;
 import com.example.userservice.dto.UserResponse;
 import com.example.userservice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user-service")
+@RequestMapping("/")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService service;
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<UserResponse> createUser(@RequestBody @Validated CreateUser dto) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Validated CreateUserRequest dto) {
         return new ResponseEntity<>(service.createUser(dto.getEmail(), dto.getName(), dto.getPassword()), HttpStatus.CREATED);
     }
 
