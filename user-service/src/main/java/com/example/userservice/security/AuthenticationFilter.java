@@ -11,8 +11,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,11 +21,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 
-@Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final UserService service;
     private final Environment env;
@@ -66,16 +62,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String username = ((User) authResult.getPrincipal()).getUsername();
         UserResponse user = service.getUserByEmail(username);
 
-        byte[] decode = Decoders.BASE64URL.decode(env.getProperty("token.secret"));
-        log.info("@@@@@@@@@@@@ : {}", new String(decode, StandardCharsets.UTF_8));
-
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(env.getProperty("token.secret")));
         String token = Jwts.builder()
-                .subject(user.userId())
-                .expiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty("token.expiration_time"))))
-                .signWith(secretKey)
-                .compact();
-        log.info("########### : {}", token);
+                           .subject(user.userId())
+                           .expiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty("token.expiration_time"))))
+                           .signWith(secretKey)
+                           .compact();
 
         response.addHeader("token", token);
         response.addHeader("userId", user.userId());

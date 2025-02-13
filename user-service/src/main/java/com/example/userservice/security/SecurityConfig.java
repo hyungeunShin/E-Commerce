@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
@@ -32,7 +31,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                           .requestMatchers("/h2-console/**", "/welcome", "/health_check", "/error/**");
+                           .requestMatchers("/h2-console/**", "/health_check", "/error/**");
     }
 
     @Bean
@@ -45,7 +44,6 @@ public class SecurityConfig {
 //                authorizeRequests.requestMatchers("/user-service/**").permitAll()
 
                 authorizeRequests
-                        .requestMatchers("/users/**").permitAll()
                         .requestMatchers("/**").access((authentication, context) -> {
                             log.info("@@@@@@@@@@@@@@@@ : {}", ipv4Matcher.matches(context.getRequest()));
                             log.info("@@@@@@@@@@@@@@@@ : {}", ipv6Matcher.matches(context.getRequest()));
@@ -56,7 +54,6 @@ public class SecurityConfig {
 
         http.authenticationManager(authenticationManager(http));
         http.addFilter(authenticationFilter(http));
-        http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
