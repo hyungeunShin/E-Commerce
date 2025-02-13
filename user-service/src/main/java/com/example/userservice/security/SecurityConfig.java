@@ -31,7 +31,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                           .requestMatchers("/h2-console/**", "/health_check", "/error/**");
+                           .requestMatchers("/h2-console/**", "/health_check", "/error/**", "/actuator/**");
     }
 
     @Bean

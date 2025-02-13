@@ -28,6 +28,13 @@ eureka:
 greeting:
   message: Welcome to the Simple E-Commerce
 
-token:
-  expiration_time: 86400000
-  secret: ZS1jb21tZXJjZSB1c2VyLXNlcnZpY2UgdXNlci10b2tlbg==
+# config-service 로 대체
+#token:
+#  expiration_time: 86400000
+#  secret: ZS1jb21tZXJjZSB1c2VyLXNlcnZpY2UgdXNlci10b2tlbg==
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans
