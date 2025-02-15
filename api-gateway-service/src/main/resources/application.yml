@@ -67,6 +67,12 @@ spring:
           predicates:
             - Path=/order-service/**
 
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: 1234
+
 eureka:
   client:
     register-with-eureka: true
@@ -78,7 +84,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httptrace
+        include: refresh, health, beans, httptrace, busrefresh
 
 #token:
 #  secret: ZS1jb21tZXJjZSB1c2VyLXNlcnZpY2UgdXNlci10b2tlbg==

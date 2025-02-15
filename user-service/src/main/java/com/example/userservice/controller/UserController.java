@@ -30,6 +30,8 @@ public class UserController {
     2. Actuator refresh
         application.yml 에 actuator 정보 추가 후 localhost:[port]/actuator/refresh 로 POST 요청
     3. Spring cloud bus
+        - 분산 시스템의 노드(Micro Service)를 경량 메시지 브로커(RabbitMQ)와 연결
+        - 상태 및 구성에 대한 변경 사항을 연결된 노드에게 전달
     */
     @GetMapping("/health_check")
     public String status(HttpServletRequest request) {
