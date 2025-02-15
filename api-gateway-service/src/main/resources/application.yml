@@ -48,6 +48,15 @@ spring:
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
 
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET, POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
@@ -65,5 +74,11 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
 
-token:
-  secret: ZS1jb21tZXJjZSB1c2VyLXNlcnZpY2UgdXNlci10b2tlbg==
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace
+
+#token:
+#  secret: ZS1jb21tZXJjZSB1c2VyLXNlcnZpY2UgdXNlci10b2tlbg==

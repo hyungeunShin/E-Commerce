@@ -5,9 +5,27 @@ spring:
   application:
     name: config-service
 
+  # Only when commit to local repository
+#  cloud:
+#    config:
+#      server:
+#        git:
+#          uri: file:///C:/intellij_workspace/ecommerce-config # .git must exist
+#          default-label: master
+
+  # When finish the push to the remote repository
   cloud:
     config:
       server:
+        native:
+          search-locations: file:///C:/native-file-repo # http://localhost:8888/user-service/native, http://localhost:8888/ecommerce/native
+
         git:
-          uri: file:///C:/intellij_workspace/ecommerce-config # .git? ???? ?
+          uri: https://github.com/hyungeunShin/E-Commerce-Config.git
           default-label: master
+          # when it is private repository
+#          username:
+#          password:
+
+  profiles:
+    active: native

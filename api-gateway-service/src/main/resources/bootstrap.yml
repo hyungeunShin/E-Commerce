@@ -5,4 +5,4 @@ spring:
       name: ecommerce # 파일명
 
   profiles:
-    active: dev
+    active: prod
