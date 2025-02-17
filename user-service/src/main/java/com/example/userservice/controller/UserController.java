@@ -32,6 +32,8 @@ public class UserController {
     3. Spring cloud bus
         - 분산 시스템의 노드(Micro Service)를 경량 메시지 브로커(RabbitMQ)와 연결
         - 상태 및 구성에 대한 변경 사항을 연결된 노드에게 전달
+        user-service -> localhost:[port]/user-service/actuator/busrefresh
+        api-gateway -> localhost:8000/actuator/busrefresh
     */
     @GetMapping("/health_check")
     public String status(HttpServletRequest request) {

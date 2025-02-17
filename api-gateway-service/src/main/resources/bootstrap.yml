@@ -2,7 +2,8 @@ spring:
   cloud:
     config:
       uri: http://127.0.0.1:8888
-      name: ecommerce # 파일명
+#      name: ecommerce # 파일명 지정
+      name: ecommerce # 프로젝트명과 동일하면 application.yml
 
-  profiles:
-    active: prod
+#  profiles:
+#    active: prod
