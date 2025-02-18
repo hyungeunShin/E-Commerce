@@ -1,10 +1,13 @@
 package com.example.userservice.service;
 
+import com.example.userservice.client.OrderServiceClient;
 import com.example.userservice.dto.OrderResponse;
 import com.example.userservice.dto.UserResponse;
 import com.example.userservice.entity.User;
 import com.example.userservice.repository.UserRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -19,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -28,6 +32,7 @@ public class UserService {
 //    private final RestTemplate restTemplate;
     private final RestClient.Builder restClientBuilder;
     private final Environment env;
+    private final OrderServiceClient orderServiceClient;
 
     @Transactional
     public UserResponse createUser(String email, String name, String password) {
@@ -50,11 +55,20 @@ public class UserService {
 //        );
 //        List<OrderResponse> orders = orderListResponse.getBody();
 
-        List<OrderResponse> orders = restClientBuilder.build()
-                                                      .get()
-                                                      .uri(orderUrl)
-                                                      .retrieve()
-                                                      .body(new ParameterizedTypeReference<List<OrderResponse>>() {});
+//        List<OrderResponse> orders = restClientBuilder.build()
+//                                                      .get()
+//                                                      .uri(orderUrl)
+//                                                      .retrieve()
+//                                                      .body(new ParameterizedTypeReference<List<OrderResponse>>() {});
+
+//        List<OrderResponse> orders = null;
+//        try {
+//            orders = orderServiceClient.getOrders(userId);
+//        } catch(FeignException e) {
+//            log.error(e.getMessage());
+//        }
+
+        List<OrderResponse> orders = orderServiceClient.getOrders(userId);
 
         return UserResponse.from(user, orders);
     }
