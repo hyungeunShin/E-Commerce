@@ -8,6 +8,9 @@ import com.example.userservice.repository.UserRepository;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,9 +34,10 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 //    private final RestTemplate restTemplate;
-    private final RestClient.Builder restClientBuilder;
+//    private final RestClient.Builder restClientBuilder;
     private final Environment env;
     private final OrderServiceClient orderServiceClient;
+    private final CircuitBreakerFactory<Resilience4JConfigBuilder.Resilience4JCircuitBreakerConfiguration, Resilience4JConfigBuilder> circuitBreakerFactory;
 
     @Transactional
     public UserResponse createUser(String email, String name, String password) {
@@ -68,8 +73,14 @@ public class UserService {
 //            log.error(e.getMessage());
 //        }
 
-        List<OrderResponse> orders = orderServiceClient.getOrders(userId);
+        //ErrorDecoder
+//        List<OrderResponse> orders = orderServiceClient.getOrders(userId);
 
+        //https://martinfowler.com/bliki/CircuitBreaker.html
+        log.info("Before call Order Microservice");
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker");
+        List<OrderResponse> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(userId), throwable -> new ArrayList<>());
+        log.info("After call Order Microservice");
         return UserResponse.from(user, orders);
     }
 

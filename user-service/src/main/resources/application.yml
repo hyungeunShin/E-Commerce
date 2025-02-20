@@ -22,6 +22,14 @@ spring:
     username: admin
     password: 1234
 
+  #zipkin, sleuth -> spring boot 2.x
+#  zipkin:
+#    base-url: http://localhost:9411
+#    enabled: true
+#  sleuth:
+#    sampler:
+#      probability: 1.0
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -39,12 +47,25 @@ greeting:
 #  expiration_time: 86400000
 #  secret: ZS1jb21tZXJjZSB1c2VyLXNlcnZpY2UgdXNlci10b2tlbg==
 
+logging:
+  level:
+    com.example.userservice.client: DEBUG
+  pattern:
+    correlation: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+
 management:
+  #zipkin, sleuth -> spring boot 3.x
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      consume: b3
+      produce: b3
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
   endpoints:
     web:
       exposure:
         include: refresh, health, beans, busrefresh
-
-logging:
-  level:
-    com.example.userservice.client: DEBUG

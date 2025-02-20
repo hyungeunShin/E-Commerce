@@ -29,16 +29,34 @@ ext {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'io.jsonwebtoken:jjwt:0.12.6'
+
+	/* discovery service를 위한 eureka client */
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+	/* config 정보와 spring cloud bus */
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+
+	/* Microservice 통신 */
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	/* 장애 처리와 Microservice 분산 추적 */
+	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+//	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+//	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
+	//spring boot 3
+	implementation 'io.micrometer:micrometer-observation'
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+	implementation 'io.zipkin.brave:brave-instrumentation-spring-web'
+	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+	//이걸 추가하지 않으면 user-service쪽에서 order-service를 호출했을 때 같은 traceId로 추적되지 않음
+	implementation 'io.github.openfeign:feign-micrometer'
 
 	runtimeOnly 'com.h2database:h2'
 

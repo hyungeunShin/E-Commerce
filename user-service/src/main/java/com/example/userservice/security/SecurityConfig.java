@@ -45,8 +45,8 @@ public class SecurityConfig {
 
                 authorizeRequests
                         .requestMatchers("/**").access((authentication, context) -> {
-                            log.info("@@@@@@@@@@@@@@@@ : {}", ipv4Matcher.matches(context.getRequest()));
-                            log.info("@@@@@@@@@@@@@@@@ : {}", ipv6Matcher.matches(context.getRequest()));
+//                            log.info("@@@@@@@@@@@@@@@@ : {}", ipv4Matcher.matches(context.getRequest()));
+//                            log.info("@@@@@@@@@@@@@@@@ : {}", ipv6Matcher.matches(context.getRequest()));
                             boolean isAllowed = ipv4Matcher.matches(context.getRequest()) || ipv6Matcher.matches(context.getRequest());
                             return new AuthorizationDecision(isAllowed);
                         })

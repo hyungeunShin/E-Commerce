@@ -79,3 +79,13 @@ services:
     volumes:
       - ./confluent/connect/connector/confluentinc-kafka-connect-jdbc/lib:/usr/share/confluent-hub-components
       - ./confluent/connect/mysql:/etc/kafka-connect/jars
+  
+  # https://zipkin.io/pages/quickstart.html
+  # https://github.com/openzipkin/zipkin/blob/master/docker/examples/docker-compose.yml
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      - "9411:9411"

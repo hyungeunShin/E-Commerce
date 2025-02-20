@@ -1,6 +1,5 @@
 package com.example.userservice;
 
-import feign.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -36,10 +35,5 @@ public class UserServiceApplication {
 	@Bean
 	public RestClient.Builder restClientBuilder() {
 		return RestClient.builder();
-	}
-
-	@Bean
-	public Logger.Level feignLoggerLevel() {
-		return Logger.Level.FULL;
 	}
 }

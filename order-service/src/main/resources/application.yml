@@ -6,12 +6,12 @@ spring:
     name: order-service
 
   datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:testdb
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mydb
-    username: root
-    password: 1234
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/mydb
+#    username: root
+#    password: 1234
 
   jpa:
     hibernate:
@@ -24,6 +24,14 @@ spring:
         web-allow-others: true
       path: /h2-console
 
+  #zipkin, sleuth -> spring boot 2.x
+#  zipkin:
+#    base-url: http://localhost:9411
+#    enabled: true
+#  sleuth:
+#    sampler:
+#      probability: 1.0
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -32,3 +40,21 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+logging:
+  level:
+    com.example.orderservice: DEBUG
+  pattern:
+    correlation: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+
+management:
+  #zipkin, sleuth -> spring boot 3.x
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      consume: b3
+      produce: b3
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans

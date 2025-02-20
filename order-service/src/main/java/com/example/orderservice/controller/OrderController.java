@@ -8,12 +8,14 @@ import com.example.orderservice.messagequeue.OrderProducer;
 import com.example.orderservice.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/order-service")
 @RequiredArgsConstructor
@@ -29,8 +31,12 @@ public class OrderController {
 
     @PostMapping("/{userId}/orders")
     public ResponseEntity<OrderResponse> createOrder(@PathVariable("userId") String userId, @RequestBody CreateOrderRequest dto) {
-//        OrderResponse order = service.createOrder(dto.productId(), dto.quantity(), dto.unitPrice(), userId);
-        catalogProducer.send("example-catalog-topic", new KafkaDecreaseStockDTO(dto.productId(), dto.quantity()));
+        log.info("Before add Order data");
+        OrderResponse order = service.createOrder(dto.productId(), dto.quantity(), dto.unitPrice(), userId);
+        log.info("After add Order data");
+
+        //데이터 동기화를 위한 kafka
+//        catalogProducer.send("example-catalog-topic", new KafkaDecreaseStockDTO(dto.productId(), dto.quantity()));
 
         /*
         {
@@ -48,12 +54,15 @@ public class OrderController {
             }
         }
         */
-        OrderResponse order = orderProducer.send("orders", userId, dto.productId(), dto.quantity(), dto.unitPrice());
+//        OrderResponse order = orderProducer.send("orders", userId, dto.productId(), dto.quantity(), dto.unitPrice());
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
     @GetMapping("/{userId}/orders")
     public ResponseEntity<List<OrderResponse>> getOrder(@PathVariable("userId") String userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.getOrdersByUserId(userId));
+        log.info("Before retrieve Order data");
+        List<OrderResponse> order = service.getOrdersByUserId(userId);
+        log.info("After retrieve Order data");
+        return ResponseEntity.status(HttpStatus.OK).body(order);
     }
 }
