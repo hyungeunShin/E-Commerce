@@ -3,6 +3,7 @@ package com.example.userservice.controller;
 import com.example.userservice.dto.CreateUserRequest;
 import com.example.userservice.dto.UserResponse;
 import com.example.userservice.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ public class UserController {
         api-gateway -> localhost:8000/actuator/busrefresh
     */
     @GetMapping("/health_check")
+    @Timed(value = "users.status", longTask = true)
     public String status(HttpServletRequest request) {
         return ("It's Working in User Service on PORT %s" +
                 ", server port = %s" +
@@ -49,6 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/welcome")
+    @Timed(value = "users.welcome", longTask = true)
     public String welcome() {
         return message;
     }

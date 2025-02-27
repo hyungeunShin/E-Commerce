@@ -58,6 +58,8 @@ dependencies {
 	//이걸 추가하지 않으면 user-service쪽에서 order-service를 호출했을 때 같은 traceId로 추적되지 않음
 	implementation 'io.github.openfeign:feign-micrometer'
 
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
 	runtimeOnly 'com.h2database:h2'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

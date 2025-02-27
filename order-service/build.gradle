@@ -47,6 +47,8 @@ dependencies {
     implementation 'io.zipkin.brave:brave-instrumentation-spring-web'
     implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
