@@ -11,7 +11,7 @@ spring:
 #      server:
 #        git:
 #          uri: file:///C:/intellij_workspace/ecommerce-config # .git must exist
-#          default-label: master
+#          default-label: main
 
   # When finish the push to the remote repository
   cloud:
@@ -22,7 +22,7 @@ spring:
 
         git:
           uri: https://github.com/hyungeunShin/E-Commerce-Config.git
-          default-label: master
+          default-label: main
           # when it is private repository
 #          username:
 #          password:
