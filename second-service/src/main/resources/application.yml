@@ -5,6 +5,10 @@ spring:
   application:
     name: second-service
 
+  output:
+    ansi:
+      enabled: always
+
 eureka:
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}

@@ -5,6 +5,10 @@ spring:
   application:
     name: api-gateway-service
 
+  output:
+    ansi:
+      enabled: always
+
 eureka:
   client:
     register-with-eureka: true
