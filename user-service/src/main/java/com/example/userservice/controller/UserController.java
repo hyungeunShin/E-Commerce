@@ -1,7 +1,7 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.dto.RequestUserDTO;
-import com.example.userservice.dto.ResponseUserDTO;
+import com.example.userservice.dto.UserRequestDTO;
+import com.example.userservice.dto.UserResponseDTO;
 import com.example.userservice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -31,9 +33,19 @@ public class UserController {
         return "Welcome to the E-Commerce";
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponseDTO>> getUsers() {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable("userId") String userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findByUserId(userId));
+    }
+
     @PostMapping("/users")
-    public ResponseEntity<ResponseUserDTO> createUser(@RequestBody @Validated RequestUserDTO user) {
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Validated UserRequestDTO user) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                             .body(ResponseUserDTO.from(userService.createUser(user)));
+                             .body(UserResponseDTO.from(userService.createUser(user)));
     }
 }

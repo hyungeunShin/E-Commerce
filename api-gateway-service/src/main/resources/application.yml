@@ -9,6 +9,24 @@ spring:
     ansi:
       enabled: always
 
+  cloud:
+    gateway:
+      server:
+        webflux:
+          default-filters:
+            - name: GlobalFilter
+              args:
+                baseMessage: Spring Cloud Gateway Global Filter
+                preLogger: true
+                postLogger: true
+          routes:
+            - id: user-service
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/**
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
 eureka:
   client:
     register-with-eureka: true
