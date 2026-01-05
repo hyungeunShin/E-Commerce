@@ -28,6 +28,7 @@ public class UserController {
 
     @GetMapping("/welcome")
     public String welcome(HttpServletRequest request) {
+        log.info(request.getRemoteAddr());
         log.info("users.welcome ip: {}, {}, {}, {}", request.getRemoteAddr(), request.getRemoteHost(), request.getRequestURI(), request.getRequestURL());
         return "Welcome to the E-Commerce";
     }
