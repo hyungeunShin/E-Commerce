@@ -16,7 +16,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
 @RequiredArgsConstructor
 public class UserController {
     private final Environment env;
@@ -46,6 +45,6 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Validated UserRequestDTO user) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                             .body(UserResponseDTO.from(userService.createUser(user)));
+                             .body(userService.save(user));
     }
 }

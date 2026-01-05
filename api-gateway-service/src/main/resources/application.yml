@@ -26,8 +26,22 @@ spring:
                 - Path=/user-service/**
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - id: catalog-service
+              uri: lb://CATALOG-SERVICE
+              predicates:
+                - Path=/catalog-service/**
+              filters:
+                - RewritePath=/catalog-service/(?<segment>.*), /$\{segment}
+            - id: order-service
+              uri: lb://ORDER-SERVICE
+              predicates:
+                - Path=/order-service/**
+              filters:
+                - RewritePath=/order-service/(?<segment>.*), /$\{segment}
 
 eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
     register-with-eureka: true
     fetch-registry: true

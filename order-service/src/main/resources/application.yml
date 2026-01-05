@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: user-service
+    name: order-service
 
   output:
     ansi:
@@ -25,11 +25,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-
-  security:
-    user:
-      name: user
-      password: $2a$10$mWTLVTAHDILi3zGbd0EUU.Mew49uPJMUUh.5yUg4DnlVKWlcp5bWq
 
 eureka:
   instance:

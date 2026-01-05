@@ -5,17 +5,17 @@ import com.example.userservice.dto.UserResponseDTO;
 import com.example.userservice.entity.UserEntity;
 import com.example.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -29,11 +29,12 @@ public class UserService {
         return UserResponseDTO.from(userEntity, new ArrayList<>());
     }
 
-    public UserEntity createUser(UserRequestDTO user) {
-        return userRepository.save(UserEntity.builder()
-                                             .userId(user.userId())
-                                             .name(user.name())
-                                             .password(passwordEncoder.encode(user.password()))
-                                             .build());
+    @Transactional
+    public UserResponseDTO save(UserRequestDTO user) {
+        return UserResponseDTO.from(userRepository.save(UserEntity.builder()
+                                                                  .userId(user.userId())
+                                                                  .name(user.name())
+                                                                  .password(passwordEncoder.encode(user.password()))
+                                                                  .build()));
     }
 }
