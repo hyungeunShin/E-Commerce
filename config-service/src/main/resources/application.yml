@@ -1,0 +1,35 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+
+  output:
+    ansi:
+      enabled: always
+
+#  # local repository(commit only, no push)
+#  cloud:
+#    config:
+#      server:
+#        git:
+#          uri: file:///C:/Users/UNF_PHM/Desktop/E-Commerce-Config
+#          default-label: local
+
+  # remote or native
+  profiles:
+    active: git
+#    active: native
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/hyungeunShin/E-Commerce-Config
+          default-label: remote
+#          # private repository
+#          username:
+#          password:
+        native:
+          search-locations: file:///C:/Users/UNF_PHM/Desktop/E-Commerce-Config

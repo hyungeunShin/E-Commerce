@@ -1,2 +1,2 @@
-## JWT
+## Config Service
 

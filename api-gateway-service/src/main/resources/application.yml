@@ -71,5 +71,16 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-token:
-  secret: e-commerce user-service user-token
+#token:
+#  secret: e-commerce user-service user-token
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - refresh
+          - health
+          - beans
+          - info
+          - httpexchanges

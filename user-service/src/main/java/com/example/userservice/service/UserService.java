@@ -33,11 +33,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll().stream().map(UserResponseDTO::from).toList();
     }
 
-    public UserResponseDTO findByUserId(String userId) {
-        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-        return UserResponseDTO.from(user, new ArrayList<>());
-    }
-
     @Transactional
     public UserResponseDTO save(UserRequestDTO user) {
         return UserResponseDTO.from(userRepository.save(UserEntity.builder()
@@ -45,5 +40,10 @@ public class UserService implements UserDetailsService {
                                                                   .name(user.name())
                                                                   .password(passwordEncoder.encode(user.password()))
                                                                   .build()));
+    }
+
+    public UserResponseDTO findByUserId(String userId) {
+        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+        return UserResponseDTO.from(user, new ArrayList<>());
     }
 }

@@ -23,12 +23,23 @@ public class UserController {
 
     @GetMapping("/health-check")
     public String status() {
-        return "It's Working in User Service, port(local.server.port)=%s, port(server.port)=%s".formatted(env.getProperty("local.server.port"), env.getProperty("server.port"));
+        //return "It's Working in User Service, port(local.server.port)=%s, port(server.port)=%s".formatted(env.getProperty("local.server.port"), env.getProperty("server.port"));
+
+        return """
+        [User Service Status]
+        - local.server.port: %s
+        - server.port:       %s
+        - token secret:      %s
+        - token expiration:  %s
+        """.formatted(env.getProperty("local.server.port"),
+                      env.getProperty("server.port"),
+                      env.getProperty("token.secret"),
+                      env.getProperty("token.expiration-time")
+        );
     }
 
     @GetMapping("/welcome")
     public String welcome(HttpServletRequest request) {
-        log.info(request.getRemoteAddr());
         log.info("users.welcome ip: {}, {}, {}, {}", request.getRemoteAddr(), request.getRemoteHost(), request.getRequestURI(), request.getRequestURL());
         return "Welcome to the E-Commerce";
     }
@@ -38,14 +49,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
 
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<UserResponseDTO> getUser(@PathVariable("userId") String userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findByUserId(userId));
-    }
-
     @PostMapping("/users")
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Validated UserRequestDTO user) {
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(userService.save(user));
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable("userId") String userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findByUserId(userId));
     }
 }

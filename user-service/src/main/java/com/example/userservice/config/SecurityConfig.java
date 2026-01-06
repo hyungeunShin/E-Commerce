@@ -28,7 +28,9 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer configure() {
-        return web -> web.ignoring().requestMatchers(PathRequest.toH2Console());
+        return web -> web.ignoring().requestMatchers(PathRequest.toH2Console())
+                                               .requestMatchers("/actuator/**")
+                                               .requestMatchers("/health-check/**");
     }
 
     @Bean
@@ -38,9 +40,12 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth ->
                 auth.requestMatchers("/**").access(
-//                        new WebExpressionAuthorizationManager(
-//                                "hasIpAddress('127.0.0.1') or hasIpAddress('::1') or hasIpAddress('172.19.0.0/16')"
-//                        )
+                        /*
+                        new WebExpressionAuthorizationManager(
+                                "hasIpAddress('127.0.0.1') or hasIpAddress('::1') or hasIpAddress('192.168.0.28')"
+                        )
+                        */
+
                         (authentication, context) -> {
                             boolean m1 = new IpAddressMatcher("127.0.0.1").matches(context.getRequest());
                             boolean m2 = new IpAddressMatcher("::1").matches(context.getRequest());
