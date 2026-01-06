@@ -37,15 +37,6 @@ spring:
     username: guest
     password: guest
 
-  # bootstrap 의존성을 제거하지 않으면 오류가 발생
-  # bootstrap.yml 대신에 spring.config.import 사용
-  config:
-    import: "optional:configserver:http://localhost:8888"
-  # spring.application.name 이름으로 파일을 찾기 때문에 ecommerce 명시
-  cloud:
-    config:
-      name: ecommerce
-
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -54,10 +45,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
-
-#token:
-#  secret: e-commerce user-service user-token
-#  expiration-time: 86400000
 
 management:
   endpoints:

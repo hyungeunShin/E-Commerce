@@ -63,8 +63,6 @@ spring:
               filters:
                 - RewritePath=/order-service/(?<segment>.*), /$\{segment}
                 - AuthorizationHeaderFilter
-    config:
-      name: ecommerce
 
   rabbitmq:
     host: localhost
@@ -72,18 +70,12 @@ spring:
     username: guest
     password: guest
 
-  config:
-    import: "optional:configserver:http://localhost:8888"
-
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
-
-#token:
-#  secret: e-commerce user-service user-token
 
 management:
   endpoints:
