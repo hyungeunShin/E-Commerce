@@ -19,8 +19,8 @@ spring:
 
   # remote or native
   profiles:
-    active: git
-#    active: native
+#    active: git
+    active: native
 
   cloud:
     config:
@@ -33,3 +33,17 @@ spring:
 #          password:
         native:
           search-locations: file:///C:/Users/UNF_PHM/Desktop/E-Commerce-Config
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - busrefresh

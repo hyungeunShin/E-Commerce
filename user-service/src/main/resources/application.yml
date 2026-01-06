@@ -31,6 +31,21 @@ spring:
       name: user
       password: $2a$10$mWTLVTAHDILi3zGbd0EUU.Mew49uPJMUUh.5yUg4DnlVKWlcp5bWq
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # bootstrap 의존성을 제거하지 않으면 오류가 발생
+  # bootstrap.yml 대신에 spring.config.import 사용
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  # spring.application.name 이름으로 파일을 찾기 때문에 ecommerce 명시
+  cloud:
+    config:
+      name: ecommerce
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -53,3 +68,4 @@ management:
           - health
           - beans
           - info
+          - busrefresh
