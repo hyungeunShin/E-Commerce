@@ -19,8 +19,8 @@ spring:
 
   # remote or native
   profiles:
-#    active: git
-    active: native
+    active: git
+#    active: native
 
   cloud:
     config:

@@ -1,0 +1,9 @@
+encrypt:
+#  # 대칭키
+#  key: ecommerce-config-encryption-key123!@#
+
+  # 비대칭키
+  key-store:
+    location: classpath:/key_store/apiEncryptionKey.jks
+    password: 1q2w3e4r
+    alias: apiEncryptionKey
