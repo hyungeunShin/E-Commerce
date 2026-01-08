@@ -37,6 +37,10 @@ spring:
     username: guest
     password: guest
 
+logging:
+  level:
+    com.example.userservice.client: DEBUG
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}

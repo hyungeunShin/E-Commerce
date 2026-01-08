@@ -1,5 +1,6 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.dto.LoginRequestDTO;
 import com.example.userservice.dto.UserRequestDTO;
 import com.example.userservice.dto.UserResponseDTO;
 import com.example.userservice.service.UserService;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -57,6 +59,16 @@ public class UserController {
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<UserResponseDTO> getUser(@PathVariable("userId") String userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findByUserId(userId));
+        return ResponseEntity.status(HttpStatus.OK)
+                             .body(userService.findByUserId(userId));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(@RequestBody @Validated LoginRequestDTO dto) {
+        String token = userService.login(dto.userId(), dto.password());
+        log.info("Custom Login");
+        return ResponseEntity.status(HttpStatus.OK)
+                             .header(HttpHeaders.AUTHORIZATION, token)
+                             .build();
     }
 }
