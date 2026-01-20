@@ -6,24 +6,22 @@ import com.example.userservice.dto.UserRequestDTO;
 import com.example.userservice.dto.UserResponseDTO;
 import com.example.userservice.entity.UserEntity;
 import com.example.userservice.repository.UserRepository;
-import feign.Feign;
-import feign.FeignException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClient;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +36,7 @@ public class UserService {
     private final Environment env;
     //private final RestClient restClient;
     private final OrderServiceClient orderServiceClient;
+    private final CircuitBreaker circuitBreaker;
 
     public List<UserResponseDTO> findAll() {
         return userRepository.findAll().stream().map(UserResponseDTO::from).toList();
@@ -68,8 +67,12 @@ public class UserService {
 //            log.error(e.getMessage());
 //        }
 
-        List<OrderResponseDTO> orders = orderServiceClient.getOrder(userId);
-
+        log.info("Before call order service");
+        List<OrderResponseDTO> orders = circuitBreaker.run(() -> orderServiceClient.getOrder(userId), throwable -> {
+            log.error("CircuitBreaker Fallback", throwable);
+            return new ArrayList<>();
+        });
+        log.info("After call order service");
         return UserResponseDTO.from(user, orders);
     }
 

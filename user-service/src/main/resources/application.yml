@@ -37,9 +37,15 @@ spring:
     username: guest
     password: guest
 
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+
 logging:
   level:
     com.example.userservice.client: DEBUG
+  pattern:
+    correlation: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
 
 eureka:
   instance:
@@ -60,3 +66,14 @@ management:
           - beans
           - info
           - busrefresh
+
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      consume: B3
+      produce: B3
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans

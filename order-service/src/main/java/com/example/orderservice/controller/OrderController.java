@@ -4,6 +4,7 @@ import com.example.orderservice.dto.OrderRequestDTO;
 import com.example.orderservice.dto.OrderResponseDTO;
 import com.example.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class OrderController {
@@ -24,6 +26,7 @@ public class OrderController {
 
     @GetMapping("/{userId}/orders")
     public ResponseEntity<List<OrderResponseDTO>> getOrder(@PathVariable("userId") String userId) {
+        log.info("Called getOrder");
         return ResponseEntity.status(HttpStatus.OK)
                              .body(orderService.findByUserId(userId));
     }
