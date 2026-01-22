@@ -25,7 +25,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     driver-class-name: org.postgresql.Driver
-    username: root
+    username: postgres
     password: password
 
   jpa:
@@ -52,6 +52,16 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - httpexchanges
+          - info
+          - metrics
+          - prometheus
+
   tracing:
     sampling:
       probability: 1.0

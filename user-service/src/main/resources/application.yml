@@ -66,6 +66,9 @@ management:
           - beans
           - info
           - busrefresh
+          - info
+          - metrics
+          - prometheus
 
   tracing:
     sampling:

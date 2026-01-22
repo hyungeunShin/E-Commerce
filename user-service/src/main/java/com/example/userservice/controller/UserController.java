@@ -4,6 +4,7 @@ import com.example.userservice.dto.LoginRequestDTO;
 import com.example.userservice.dto.UserRequestDTO;
 import com.example.userservice.dto.UserResponseDTO;
 import com.example.userservice.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/health-check")
+    @Timed(value = "users.status", longTask = true)
     public String status() {
         //return "It's Working in User Service, port(local.server.port)=%s, port(server.port)=%s".formatted(env.getProperty("local.server.port"), env.getProperty("server.port"));
 
@@ -41,6 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/welcome")
+    @Timed(value = "users.welcome", longTask = true)
     public String welcome(HttpServletRequest request) {
         log.info("users.welcome ip: {}, {}, {}, {}", request.getRemoteAddr(), request.getRemoteHost(), request.getRequestURI(), request.getRequestURL());
         return "Welcome to the E-Commerce";

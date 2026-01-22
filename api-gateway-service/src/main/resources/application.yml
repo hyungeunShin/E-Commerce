@@ -88,3 +88,6 @@ management:
           - info
           - httpexchanges
           - busrefresh
+          - info
+          - metrics
+          - prometheus
