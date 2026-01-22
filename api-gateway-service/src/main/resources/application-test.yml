@@ -1,0 +1,60 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: api-gateway-service
+
+  cloud:
+    gateway:
+#      # webmvc -> tomcat
+#      mvc:
+#        routes:
+#          - id: first-service
+#            uri: http://localhost:8081/
+#            predicates:
+#              - Path=/first-service/**
+#          - id: second-service
+#            uri: http://localhost:8082/
+#            predicates:
+#              - Path=/second-service/**
+      # webflux -> netty
+      server:
+        webflux:
+          default-filters:
+            - name: GlobalFilter
+              args:
+                baseMessage: Spring Cloud Gateway Global Filter
+                preLogger: true
+                postLogger: true
+          routes:
+            - id: first-service
+#              uri: http://localhost:8081/
+              uri: lb://FIRST-SERVICE
+              predicates:
+                - Path=/first-service/**
+              filters:
+#                - AddRequestHeader=f-request, f-request-yml
+#                - AddResponseHeader=f-response, f-response-yml
+                - CustomFilter
+            - id: second-service
+#              uri: http://localhost:8082/
+              uri: lb://SECOND-SERVICE
+              predicates:
+                - Path=/second-service/**
+              filters:
+#                - AddRequestHeader=s-request, s-request-yml
+#                - AddResponseHeader=s-response, s-response-yml
+                - name: CustomFilter
+                - name: LoggingFilter
+                  args:
+                    baseMessage: Spring Cloud Gateway Logging Filter
+                    preLogger: true
+                    postLogger: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

@@ -1,94 +1,98 @@
 package com.example.userservice.service;
 
 import com.example.userservice.client.OrderServiceClient;
-import com.example.userservice.dto.OrderResponse;
-import com.example.userservice.dto.UserResponse;
-import com.example.userservice.entity.User;
+import com.example.userservice.dto.OrderResponseDTO;
+import com.example.userservice.dto.UserRequestDTO;
+import com.example.userservice.dto.UserResponseDTO;
+import com.example.userservice.entity.UserEntity;
 import com.example.userservice.repository.UserRepository;
-import feign.FeignException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final RestTemplate restTemplate;
-//    private final RestClient.Builder restClientBuilder;
     private final Environment env;
+    //private final RestClient restClient;
     private final OrderServiceClient orderServiceClient;
-    private final CircuitBreakerFactory<Resilience4JConfigBuilder.Resilience4JCircuitBreakerConfiguration, Resilience4JConfigBuilder> circuitBreakerFactory;
+    private final CircuitBreaker circuitBreaker;
 
-    @Transactional
-    public UserResponse createUser(String email, String name, String password) {
-        if(repository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("이미 존재하는 이메일");
-        }
-        User user = new User(email, name, UUID.randomUUID().toString(), passwordEncoder.encode(password));
-        repository.save(user);
-        return UserResponse.from(user);
+    public List<UserResponseDTO> findAll() {
+        return userRepository.findAll().stream().map(UserResponseDTO::from).toList();
     }
 
-    public UserResponse getUserByUserId(String userId) {
-        User user = repository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-        String orderUrl = env.getProperty("order_service.url").formatted(userId);
-//        ResponseEntity<List<OrderResponse>> orderListResponse = restTemplate.exchange(
-//                        orderUrl,
-//                        HttpMethod.GET,
-//                        null,
-//                        new ParameterizedTypeReference<List<OrderResponse>>() {}
-//        );
-//        List<OrderResponse> orders = orderListResponse.getBody();
+    @Transactional
+    public UserResponseDTO save(UserRequestDTO user) {
+        return UserResponseDTO.from(userRepository.save(UserEntity.builder()
+                                                                  .userId(user.userId())
+                                                                  .name(user.name())
+                                                                  .password(passwordEncoder.encode(user.password()))
+                                                                  .build()));
+    }
 
-//        List<OrderResponse> orders = restClientBuilder.build()
-//                                                      .get()
-//                                                      .uri(orderUrl)
-//                                                      .retrieve()
-//                                                      .body(new ParameterizedTypeReference<List<OrderResponse>>() {});
+    public UserResponseDTO findByUserId(String userId) {
+        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
-//        List<OrderResponse> orders = null;
+//        String orderUrl = String.format(Objects.requireNonNull(env.getProperty("order-service.url")), userId);
+//        List<OrderResponseDTO> orders = restClient.get()
+//                                                  .uri(orderUrl)
+//                                                  .retrieve()
+//                                                  .body(new ParameterizedTypeReference<>() {});
+
+//        List<OrderResponseDTO> orders = null;
 //        try {
-//            orders = orderServiceClient.getOrders(userId);
+//            orders = orderServiceClient.getOrder(userId);
 //        } catch(FeignException e) {
 //            log.error(e.getMessage());
 //        }
 
-        //ErrorDecoder
-//        List<OrderResponse> orders = orderServiceClient.getOrders(userId);
-
-        //https://martinfowler.com/bliki/CircuitBreaker.html
-        log.info("Before call Order Microservice");
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker");
-        List<OrderResponse> orders = circuitBreaker.run(() -> orderServiceClient.getOrders(userId), throwable -> new ArrayList<>());
-        log.info("After call Order Microservice");
-        return UserResponse.from(user, orders);
+        log.info("Before call order service");
+        List<OrderResponseDTO> orders = circuitBreaker.run(() -> orderServiceClient.getOrder(userId), throwable -> {
+            log.error("CircuitBreaker Fallback", throwable);
+            return new ArrayList<>();
+        });
+        log.info("After call order service");
+        return UserResponseDTO.from(user, orders);
     }
 
-    public List<UserResponse> getUserAll() {
-        return repository.findAll().stream().map(UserResponse::from).toList();
-    }
+    public String login(String userId, String password) {
+        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
-    public UserResponse getUserByEmail(String username) {
-        return UserResponse.from(repository.findByEmail(username).orElseThrow());
+        if(!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        byte[] secretKeyBytes = Objects.requireNonNull(env.getProperty("token.secret")).getBytes(StandardCharsets.UTF_8);
+        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+
+        Instant now = Instant.now();
+
+        return Jwts.builder()
+                   .subject(userId)
+                   .expiration(Date.from(now.plusMillis(Long.parseLong(Objects.requireNonNull(env.getProperty("token.expiration-time"))))))
+                   .issuedAt(Date.from(now))
+                   .signWith(secretKey)
+                   .compact();
     }
 }

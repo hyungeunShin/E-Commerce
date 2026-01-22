@@ -2,9 +2,6 @@ spring:
   cloud:
     config:
       uri: http://localhost:8888
-#      name: ecommerce # 파일명 지정
-#      name: config-service # 프로젝트명과 동일하면 application.yml
+      # default값은 spring.application.name
+#      name: ecommerce
       name: user-service
-
-#  profiles:
-#    active: dev

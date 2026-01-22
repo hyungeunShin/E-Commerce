@@ -1,13 +1,15 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.dto.CreateUserRequest;
-import com.example.userservice.dto.UserResponse;
+import com.example.userservice.dto.LoginRequestDTO;
+import com.example.userservice.dto.UserRequestDTO;
+import com.example.userservice.dto.UserResponseDTO;
 import com.example.userservice.service.UserService;
 import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,59 +17,61 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService service;
     private final Environment env;
+    private final UserService userService;
 
-    @Value("${greeting.message}")
-    private String message;
-
-    /*
-    config-service 이후 설정 값이 바뀐다면
-    1. 서버 재기동
-    2. Actuator refresh
-        application.yml 에 actuator 정보 추가 후 localhost:[port]/actuator/refresh 로 POST 요청
-    3. Spring cloud bus
-        - 분산 시스템의 노드(Micro Service)를 경량 메시지 브로커(RabbitMQ)와 연결
-        - 상태 및 구성에 대한 변경 사항을 연결된 노드에게 전달
-        user-service -> localhost:[port]/user-service/actuator/busrefresh
-        api-gateway -> localhost:8000/actuator/busrefresh
-    */
-    @GetMapping("/health_check")
+    @GetMapping("/health-check")
     @Timed(value = "users.status", longTask = true)
-    public String status(HttpServletRequest request) {
-        return ("It's Working in User Service on PORT %s" +
-                ", server port = %s" +
-                ", test1 = %s" +
-                ", test2 = %s" +
-                ", token secret = %s" +
-                ", token expiration time = %s")
-                .formatted(request.getServerPort(), env.getProperty("server.port"),
-                        env.getProperty("test.test1"), env.getProperty("test.test2"),
-                        env.getProperty("token.secret"), env.getProperty("token.expiration_time"));
+    public String status() {
+        //return "It's Working in User Service, port(local.server.port)=%s, port(server.port)=%s".formatted(env.getProperty("local.server.port"), env.getProperty("server.port"));
+
+        return """
+        [User Service Status]
+        - local.server.port: %s
+        - server.port:       %s
+        - token secret:      %s
+        - token expiration:  %s
+        """.formatted(env.getProperty("local.server.port"),
+                      env.getProperty("server.port"),
+                      env.getProperty("token.secret"),
+                      env.getProperty("token.expiration-time")
+        );
     }
 
     @GetMapping("/welcome")
     @Timed(value = "users.welcome", longTask = true)
-    public String welcome() {
-        return message;
-    }
-
-    @PostMapping("/users")
-    public ResponseEntity<UserResponse> createUser(@RequestBody @Validated CreateUserRequest dto) {
-        return new ResponseEntity<>(service.createUser(dto.getEmail(), dto.getName(), dto.getPassword()), HttpStatus.CREATED);
+    public String welcome(HttpServletRequest request) {
+        log.info("users.welcome ip: {}, {}, {}, {}", request.getRemoteAddr(), request.getRemoteHost(), request.getRequestURI(), request.getRequestURL());
+        return "Welcome to the E-Commerce";
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserResponse>> getUsers() {
-        return ResponseEntity.ok(service.getUserAll());
+    public ResponseEntity<List<UserResponseDTO>> getUsers() {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Validated UserRequestDTO user) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                             .body(userService.save(user));
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable("userId") String userId) {
-        return ResponseEntity.ok(service.getUserByUserId(userId));
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable("userId") String userId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                             .body(userService.findByUserId(userId));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(@RequestBody @Validated LoginRequestDTO dto) {
+        String token = userService.login(dto.userId(), dto.password());
+        log.info("Custom Login");
+        return ResponseEntity.status(HttpStatus.OK)
+                             .header(HttpHeaders.AUTHORIZATION, token)
+                             .build();
     }
 }

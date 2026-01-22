@@ -5,39 +5,45 @@ spring:
   application:
     name: config-service
 
-  # Only when commit to local repository
+  output:
+    ansi:
+      enabled: always
+
+#  # local repository(commit only, no push)
 #  cloud:
 #    config:
 #      server:
 #        git:
-#          uri: file:///C:/intellij_workspace/ecommerce-config # .git must exist
-#          default-label: main
+#          uri: file:///C:/Users/UNF_PHM/Desktop/E-Commerce-Config
+#          default-label: local
 
-  # When finish the push to the remote repository
+  # remote or native
+  profiles:
+    active: git
+#    active: native
+
   cloud:
     config:
       server:
-        native:
-          search-locations: file:///C:/native-file-repo # http://localhost:8888/user-service/native, http://localhost:8888/ecommerce/native
-
         git:
-          uri: https://github.com/hyungeunShin/E-Commerce-Config.git
-          default-label: main
-          # when it is private repository
+          uri: https://github.com/hyungeunShin/E-Commerce-Config
+          default-label: remote
+#          # private repository
 #          username:
 #          password:
-
-  profiles:
-    active: native
+        native:
+          search-locations: file:///C:/Users/UNF_PHM/Desktop/E-Commerce-Config
 
   rabbitmq:
     host: localhost
     port: 5672
-    username: admin
-    password: 1234
+    username: guest
+    password: guest
 
 management:
   endpoints:
     web:
       exposure:
-        include: health, busrefresh
+        include:
+          - health
+          - busrefresh

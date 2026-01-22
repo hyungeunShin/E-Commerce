@@ -1,30 +1,29 @@
 package com.example.catalogservice.controller;
 
-import com.example.catalogservice.dto.CatalogResponse;
+import com.example.catalogservice.dto.CatalogResponseDTO;
 import com.example.catalogservice.service.CatalogService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/catalog-service")
 @RequiredArgsConstructor
 public class CatalogController {
-    private final CatalogService service;
+    private final Environment env;
+    private final CatalogService catalogService;
 
-    @GetMapping("/health_check")
-    public String status(HttpServletRequest request) {
-        return "It's Working in User Service on PORT %s".formatted(request.getServerPort());
+    @GetMapping("/health-check")
+    public String status() {
+        return "It's Working in Catalog Service, port(local.server.port)=%s, port(server.port)=%s".formatted(env.getProperty("local.server.port"), env.getProperty("server.port"));
     }
 
     @GetMapping("/catalogs")
-    public ResponseEntity<List<CatalogResponse>> getCatalogs() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.getAllCatalogs());
+    public ResponseEntity<List<CatalogResponseDTO>> getCatalogs() {
+        return ResponseEntity.status(HttpStatus.OK).body(catalogService.findAll());
     }
 }

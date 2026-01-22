@@ -1,13 +1,13 @@
 server:
-  port: 0 # If you specify it as 0, random port
+  port: 0
 
 spring:
   application:
     name: user-service
 
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:testdb
+  output:
+    ansi:
+      enabled: always
 
   h2:
     console:
@@ -16,19 +16,36 @@ spring:
         web-allow-others: true
       path: /h2-console
 
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;
+#    username: sa
+#    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  security:
+    user:
+      name: user
+      password: $2a$10$mWTLVTAHDILi3zGbd0EUU.Mew49uPJMUUh.5yUg4DnlVKWlcp5bWq
+
   rabbitmq:
     host: localhost
     port: 5672
-    username: admin
-    password: 1234
+    username: guest
+    password: guest
 
-  #zipkin, sleuth -> spring boot 2.x
-#  zipkin:
-#    base-url: http://localhost:9411
-#    enabled: true
-#  sleuth:
-#    sampler:
-#      probability: 1.0
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+
+logging:
+  level:
+    com.example.userservice.client: DEBUG
+  pattern:
+    correlation: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
 
 eureka:
   instance:
@@ -39,33 +56,27 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-greeting:
-  message: Welcome to the Simple E-Commerce
-
-# config-service 로 대체
-#token:
-#  expiration_time: 86400000
-#  secret: ZS1jb21tZXJjZSB1c2VyLXNlcnZpY2UgdXNlci10b2tlbg==
-
-logging:
-  level:
-    com.example.userservice.client: DEBUG
-  pattern:
-    correlation: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
-
 management:
-  #zipkin, sleuth -> spring boot 3.x
+  endpoints:
+    web:
+      exposure:
+        include:
+          - refresh
+          - health
+          - beans
+          - info
+          - busrefresh
+          - info
+          - metrics
+          - prometheus
+
   tracing:
     sampling:
       probability: 1.0
     propagation:
-      consume: b3
-      produce: b3
+      consume: B3
+      produce: B3
+
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
-
-  endpoints:
-    web:
-      exposure:
-        include: refresh, health, beans, busrefresh, info, metrics, prometheus

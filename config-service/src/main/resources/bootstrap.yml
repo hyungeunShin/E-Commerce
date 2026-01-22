@@ -1,17 +1,9 @@
 encrypt:
-  # 대칭키
-#  key: abcdefghijklmnopqrstuvwxyz0123456789 # localhost:8888/encrypt, localhost:8888/decrypt
+#  # 대칭키
+#  key: ecommerce-config-encryption-key123!@#
 
-  # 비대칭 키
-  # 암호 생성
-  # keytool -genkeypair -alias apiEncryptionKey -keyalg RSA -dname "CN=hyungeun Shin, OU=API Development, O=joneconsulting.co.kr, L=Seoul, C=KR" -keypass "test1234" -keystore apiEncryptionKey.jks -storepass "test1234"
-  # 상세정보
-  # keytool -list -keystore apiEncryptionKey.jks -v
-  # 공개키 생성
-  # keytool -export -alias apiEncryptionKey -keystore apiEncryptionKey.jks -rfc -file trustServer.cer
-  # 인증서 파일을 jks로
-  # keytool -import -alias trustServer -file trustServer.cer -keystore publicKey.jks
+  # 비대칭키
   key-store:
-    location: file:///C:/keystore/apiEncryptionKey.jks
-    password: test1234
+    location: classpath:/key_store/apiEncryptionKey.jks
+    password: 1q2w3e4r
     alias: apiEncryptionKey

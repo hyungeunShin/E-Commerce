@@ -1,3 +1,3 @@
-insert into catalog(product_id, product_name, stock, unit_price) values('CATALOG-001', 'TV', 100, 1000);
-insert into catalog(product_id, product_name, stock, unit_price) values('CATALOG-002', 'Computer', 120, 1500);
-insert into catalog(product_id, product_name, stock, unit_price) values('CATALOG-003', 'Phone', 140, 2000);
+INSERT INTO CATALOG(PRODUCT_NAME, STOCK, UNIT_PRICE) VALUES('TV', 100, 1000);
+INSERT INTO CATALOG(PRODUCT_NAME, STOCK, UNIT_PRICE) VALUES('Computer', 120, 1500);
+INSERT INTO CATALOG(PRODUCT_NAME, STOCK, UNIT_PRICE) VALUES('Phone', 140, 2000);

@@ -5,7 +5,14 @@ spring:
   application:
     name: discovery-service
 
+  output:
+    ansi:
+      enabled: always
+
 eureka:
+  server:
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 10000
   client:
     register-with-eureka: false
     fetch-registry: false
