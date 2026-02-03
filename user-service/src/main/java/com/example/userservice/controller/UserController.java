@@ -35,10 +35,14 @@ public class UserController {
         - server.port:       %s
         - token secret:      %s
         - token expiration:  %s
+        - config test:       %s
+        - order-service.ulr: %s
         """.formatted(env.getProperty("local.server.port"),
                       env.getProperty("server.port"),
                       env.getProperty("token.secret"),
-                      env.getProperty("token.expiration-time")
+                      env.getProperty("token.expiration-time"),
+                      env.getProperty("config.test"),
+                      env.getProperty("order-service.url")
         );
     }
 

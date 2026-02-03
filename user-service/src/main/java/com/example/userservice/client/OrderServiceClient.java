@@ -11,7 +11,7 @@ import java.util.List;
 //Eureka Server에서 order-service를 검색하여 직접 호출
 //@FeignClient(name = "order-service")
 //api-gateway-service를 거쳐 호출
-@FeignClient(name = "order-service", url = "http://localhost:8000/order-service", configuration = FeignErrorDecoder.class)
+@FeignClient(name = "order-service", url = "${order-service.url}", configuration = FeignErrorDecoder.class)
 public interface OrderServiceClient {
     @GetMapping("/{userId}/orders")
     List<OrderResponseDTO> getOrder(@PathVariable("userId") String userId);

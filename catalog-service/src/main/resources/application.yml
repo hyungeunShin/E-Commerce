@@ -30,6 +30,9 @@ spring:
     database: h2
     defer-datasource-initialization: true
 
+  kafka:
+    bootstrap-servers: localhost:9092
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
