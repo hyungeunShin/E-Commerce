@@ -208,7 +208,6 @@ services:
 
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
 
-      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
 
   order-service:
@@ -234,7 +233,6 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://discovery-service:8761/eureka/
 
-      - SPRING_ZIPKIN_BASE_URL=http://zipkin:9411
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
 
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092

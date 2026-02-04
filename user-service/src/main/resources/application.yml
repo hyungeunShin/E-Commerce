@@ -37,10 +37,6 @@ spring:
     username: guest
     password: guest
 
-  zipkin:
-    base-url: http://localhost:9411
-    enabled: true
-
 logging:
   level:
     com.example.userservice.client: DEBUG
@@ -66,7 +62,6 @@ management:
           - beans
           - info
           - busrefresh
-          - info
           - metrics
           - prometheus
 
@@ -74,8 +69,8 @@ management:
     sampling:
       probability: 1.0
     propagation:
-      consume: B3
-      produce: B3
+      consume: W3C
+      produce: W3C
 
   zipkin:
     tracing:
