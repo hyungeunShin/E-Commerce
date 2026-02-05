@@ -89,6 +89,7 @@ services:
       retries: 3
 
   discovery-service:
+    image: discovery-service
     build: ./discovery-service
     container_name: discovery-service
     ports:
@@ -113,6 +114,7 @@ services:
       retries: 3
 
   config-service:
+    image: config-service
     build: ./config-service
     container_name: config-service
     ports:
@@ -142,6 +144,7 @@ services:
       retries: 3
 
   api-gateway-service:
+    image: api-gateway-service
     build: ./api-gateway-service
     container_name: api-gateway-service
     ports:
@@ -179,6 +182,7 @@ services:
       retries: 3
 
   user-service:
+    image: user-service
     build: ./user-service
     container_name: user-service
     depends_on:
@@ -211,6 +215,7 @@ services:
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
 
   order-service:
+    image: order-service
     build: ./order-service
     container_name: order-service
     depends_on:
@@ -240,6 +245,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
 
   catalog-service:
+    image: catalog-service
     build: ./catalog-service
     container_name: catalog-service
     depends_on:
