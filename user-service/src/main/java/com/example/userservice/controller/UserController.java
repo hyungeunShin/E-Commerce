@@ -37,7 +37,7 @@ public class UserController {
         - token expiration:  %s
         - config test:       %s
         - order-service.ulr: %s
-        - build test
+        - build test changed
         """.formatted(env.getProperty("local.server.port"),
                       env.getProperty("server.port"),
                       env.getProperty("token.secret"),
